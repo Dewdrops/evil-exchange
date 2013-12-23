@@ -40,6 +40,7 @@
 ;;; Code:
 
 (require 'evil)
+(require 'cl)
 
 (defgroup evil-exchange nil
   "Easy text exchange operator for Evil."
