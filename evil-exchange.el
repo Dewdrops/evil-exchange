@@ -33,7 +33,7 @@
 ;; put evil-exchange.el into somewhere in your load-path and add these
 ;; lines to your .emacs:
 ;; (require 'evil-exchange)
-;; ;; if you want to change default key bindings, bind it to as you like HERE
+;; ;; change default key bindings (if you want) HERE
 ;; ;; (setq evil-exchange-key (kbd "zx"))
 ;; (evil-exchange-install)
 
