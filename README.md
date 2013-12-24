@@ -23,6 +23,7 @@ Clear any {motion} pending for exchange.
   up with the right {motion}
 * If you're using the same motion again (e.g. exchanging two words using
   `gxiw`), you can use `.` (evil-repeat) the second time.
+* `gxx` works as you expect.
 
 Installation
 ------------
