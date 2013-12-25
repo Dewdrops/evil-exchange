@@ -6,7 +6,7 @@
 ;; URL: http://github.com/Dewdrops/evil-exchange
 ;; Version: 0.1
 ;; Keywords: evil, plugin
-;; Package-Requires: ((evil "1.0.7"))
+;; Package-Requires: ((evil "1.0.7") (cl-lib "0.3"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -40,7 +40,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
 (require 'evil)
 
 (defgroup evil-exchange nil
