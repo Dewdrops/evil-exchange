@@ -40,3 +40,7 @@ Customization
 
 You can change the default bindings by customizing `evil-exchange-key` and/or `evil-exchange-cancel-key` BEFORE  `evil-exchange-install` is called.
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Dewdrops/evil-exchange/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
