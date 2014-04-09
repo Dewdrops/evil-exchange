@@ -64,6 +64,9 @@
 (defvar evil-exchange-position nil "Text position which will be exchanged")
 
 ;;;###autoload
+(autoload 'evil-exchange "evil-exchange"
+  "Exchange text more easily within Evil" t)
+
 (evil-define-operator evil-exchange (beg end type)
   "Exchange two regions with evil motion."
   :move-point nil
