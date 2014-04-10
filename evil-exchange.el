@@ -65,7 +65,7 @@
 
 ;;;###autoload
 (autoload 'evil-exchange "evil-exchange"
-  "Exchange text more easily within Evil" t)
+  "Exchange two regions with evil motion." t)
 
 (evil-define-operator evil-exchange (beg end type)
   "Exchange two regions with evil motion."
