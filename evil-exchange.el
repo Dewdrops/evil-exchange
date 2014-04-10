@@ -61,7 +61,24 @@
             'sexp)
   :group 'evil-exchange)
 
+(defcustom evil-exchange-highlight-face 'highlight
+  "Face used to highlight marked area."
+  :type 'sexp
+  :group 'evil-exchange)
+
 (defvar evil-exchange-position nil "Text position which will be exchanged")
+
+(defvar evil-exchange-overlays nil "Overlays used to highlight marked area")
+
+
+(defun evil-exchange-highlight (beg end)
+  (let ((o (make-overlay beg end nil t nil)))
+    (overlay-put o 'face evil-exchange-highlight-face)
+    (add-to-list 'evil-exchange-overlays o)))
+
+(defun evil-exchange-remove-overlays ()
+  (mapc 'delete-overlay evil-exchange-overlays)
+  (setq evil-exchange-overlays nil))
 
 ;;;###autoload
 (autoload 'evil-exchange "evil-exchange"
@@ -75,7 +92,12 @@
         (end-marker (copy-marker end nil)))
     (if (null evil-exchange-position)
         ;; call without evil-exchange-position set: store region
-        (setq evil-exchange-position (list beg-marker end-marker type))
+        (progn
+          (setq evil-exchange-position (list beg-marker end-marker type))
+          ;; highlight area marked to exchange
+          (if (eq type 'block)
+              (evil-apply-on-block #'evil-exchange-highlight beg end nil)
+            (evil-exchange-highlight beg end)))
       ;; secondary call: do exchange
       (cl-destructuring-bind
           (orig-beg orig-end orig-type) evil-exchange-position
@@ -89,14 +111,16 @@
               (insert-rectangle curr-rect)
               (goto-char beg-marker)
               (insert-rectangle orig-rect)))
-          (setq evil-exchange-position nil))
+          (setq evil-exchange-position nil)
+          (evil-exchange-remove-overlays))
          ;; signal error if regions incompatible
          ((or (eq orig-type 'block) (eq type 'block))
           (error "Can't exchange block region with non-block region."))
          ;; exchange normal region
          (t
           (transpose-regions orig-beg orig-end beg end)
-          (setq evil-exchange-position nil))))))
+          (setq evil-exchange-position nil)
+          (evil-exchange-remove-overlays))))))
   ;; place cursor on beginning of line
   (when (and (evil-called-interactively-p) (eq type 'line))
     (evil-first-non-blank)))
@@ -106,6 +130,7 @@
   "Cancel current pending exchange."
   (interactive)
   (setq evil-exchange-position nil)
+  (evil-exchange-remove-overlays)
   (message "Exchange cancelled"))
 
 ;;;###autoload
