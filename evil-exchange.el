@@ -72,7 +72,7 @@
   :move-point nil
   (interactive "<R>")
   (let ((beg-marker (copy-marker beg t))
-        (end-marker (copy-marker end t)))
+        (end-marker (copy-marker end nil)))
     (if (null evil-exchange-position)
         ;; call without evil-exchange-position set: store region
         (setq evil-exchange-position (list beg-marker end-marker type))
