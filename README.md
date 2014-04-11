@@ -10,7 +10,7 @@ Default bindings
 
 `gx` (evil-exchange)
 
-On the first use, define the first {motion} to exchange. On the second use,
+On the first use, define (and highlight) the first {motion} to exchange. On the second use,
 define the second {motion} and perform the exchange.
 
 `gX` (evil-exchange-cancel)
