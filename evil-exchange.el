@@ -104,26 +104,31 @@
         (cond
          ;; exchange block region
          ((and (eq orig-type 'block) (eq type 'block))
-          (let ((orig-rect (delete-extract-rectangle orig-beg orig-end))
-                (curr-rect (delete-extract-rectangle beg-marker end-marker)))
-            (save-excursion
-              (goto-char orig-beg)
-              (insert-rectangle curr-rect)
-              (goto-char beg-marker)
-              (insert-rectangle orig-rect)))
-          (setq evil-exchange-position nil)
-          (evil-exchange-remove-overlays))
+          (evil-exchange--do-swap beg-marker end-marker
+                                  orig-beg orig-end
+                                  #'delete-extract-rectangle #'insert-rectangle))
          ;; signal error if regions incompatible
          ((or (eq orig-type 'block) (eq type 'block))
           (error "Can't exchange block region with non-block region."))
          ;; exchange normal region
          (t
-          (transpose-regions orig-beg orig-end beg end)
-          (setq evil-exchange-position nil)
-          (evil-exchange-remove-overlays))))))
+          (evil-exchange--do-swap beg-marker end-marker
+                                  orig-beg orig-end
+                                  #'delete-and-extract-region #'insert))))))
   ;; place cursor on beginning of line
   (when (and (evil-called-interactively-p) (eq type 'line))
     (evil-first-non-blank)))
+
+(defun evil-exchange--do-swap (curr-beg curr-end orig-beg orig-end extract-fn insert-fn)
+  (let ((orig-text (funcall extract-fn orig-beg orig-end))
+        (curr-text (funcall extract-fn curr-beg curr-end)))
+    (save-excursion
+      (goto-char orig-beg)
+      (funcall insert-fn curr-text)
+      (goto-char curr-beg)
+      (funcall insert-fn orig-text)))
+  (setq evil-exchange-position nil)
+  (evil-exchange-remove-overlays))
 
 ;;;###autoload
 (defun evil-exchange-cancel ()
