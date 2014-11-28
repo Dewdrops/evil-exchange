@@ -4,7 +4,7 @@
 
 ;; Author: Dewdrops <v_v_4474@126.com>
 ;; URL: http://github.com/Dewdrops/evil-exchange
-;; Version: 0.2
+;; Version: 0.21
 ;; Keywords: evil, plugin
 ;; Package-Requires: ((evil "1.0.7") (cl-lib "0.3"))
 
@@ -66,19 +66,19 @@
   :type 'sexp
   :group 'evil-exchange)
 
-(defvar evil-exchange-position nil "Text position which will be exchanged")
+(defvar evil-exchange--position nil "Text position which will be exchanged")
 
-(defvar evil-exchange-overlays nil "Overlays used to highlight marked area")
+(defvar evil-exchange--overlays nil "Overlays used to highlight marked area")
 
 
-(defun evil-exchange-highlight (beg end)
+(defun evil-exchange--highlight (beg end)
   (let ((o (make-overlay beg end nil t nil)))
     (overlay-put o 'face evil-exchange-highlight-face)
-    (add-to-list 'evil-exchange-overlays o)))
+    (add-to-list 'evil-exchange--overlays o)))
 
-(defun evil-exchange-remove-overlays ()
-  (mapc 'delete-overlay evil-exchange-overlays)
-  (setq evil-exchange-overlays nil))
+(defun evil-exchange--remove-overlays ()
+  (mapc 'delete-overlay evil-exchange--overlays)
+  (setq evil-exchange--overlays nil))
 
 ;;;###autoload
 (autoload 'evil-exchange "evil-exchange"
@@ -90,17 +90,17 @@
   (interactive "<R>")
   (let ((beg-marker (copy-marker beg t))
         (end-marker (copy-marker end nil)))
-    (if (null evil-exchange-position)
-        ;; call without evil-exchange-position set: store region
+    (if (null evil-exchange--position)
+        ;; call without evil-exchange--position set: store region
         (progn
-          (setq evil-exchange-position (list beg-marker end-marker type))
+          (setq evil-exchange--position (list beg-marker end-marker type))
           ;; highlight area marked to exchange
           (if (eq type 'block)
-              (evil-apply-on-block #'evil-exchange-highlight beg end nil)
-            (evil-exchange-highlight beg end)))
+              (evil-apply-on-block #'evil-exchange--highlight beg end nil)
+            (evil-exchange--highlight beg end)))
       ;; secondary call: do exchange
       (cl-destructuring-bind
-          (orig-beg orig-end orig-type) evil-exchange-position
+          (orig-beg orig-end orig-type) evil-exchange--position
         (cond
          ;; exchange block region
          ((and (eq orig-type 'block) (eq type 'block))
@@ -127,15 +127,15 @@
       (funcall insert-fn curr-text)
       (goto-char curr-beg)
       (funcall insert-fn orig-text)))
-  (setq evil-exchange-position nil)
-  (evil-exchange-remove-overlays))
+  (setq evil-exchange--position nil)
+  (evil-exchange--remove-overlays))
 
 ;;;###autoload
 (defun evil-exchange-cancel ()
   "Cancel current pending exchange."
   (interactive)
-  (setq evil-exchange-position nil)
-  (evil-exchange-remove-overlays)
+  (setq evil-exchange--position nil)
+  (evil-exchange--remove-overlays)
   (message "Exchange cancelled"))
 
 ;;;###autoload
