@@ -146,5 +146,22 @@
   (define-key evil-normal-state-map evil-exchange-cancel-key 'evil-exchange-cancel)
   (define-key evil-visual-state-map evil-exchange-cancel-key 'evil-exchange-cancel))
 
+
+(defun evil-exchange/cx ()
+  (interactive)
+  (when (memq evil-this-operator '(evil-change evil-cp-change))
+    (setq evil-inhibit-operator t)
+    (define-key evil-operator-shortcut-map "c" 'evil-exchange-cancel)
+    (call-interactively #'evil-exchange)
+    (define-key evil-operator-shortcut-map "c" nil)))
+
+;;;###autoload
+(defun evil-exchange-cx-install ()
+  "Setting evil-exchange key bindings in a vim-compatible way"
+  (interactive)
+  (define-key evil-operator-state-map "x" 'evil-exchange/cx)
+  (define-key evil-visual-state-map "X" 'evil-exchange))
+
+
 (provide 'evil-exchange)
 ;;; evil-exchange.el ends here
