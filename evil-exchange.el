@@ -4,7 +4,7 @@
 
 ;; Author: Dewdrops <v_v_4474@126.com>
 ;; URL: http://github.com/Dewdrops/evil-exchange
-;; Version: 0.22
+;; Version: 0.23
 ;; Keywords: evil, plugin
 ;; Package-Requires: ((evil "1.0.7") (cl-lib "0.3"))
 
@@ -106,7 +106,8 @@
          ((and (eq orig-type 'block) (eq type 'block))
           (evil-exchange--do-swap beg-marker end-marker
                                   orig-beg orig-end
-                                  #'delete-extract-rectangle #'insert-rectangle))
+                                  #'delete-extract-rectangle #'insert-rectangle
+                                  nil))
          ;; signal error if regions incompatible
          ((or (eq orig-type 'block) (eq type 'block))
           (user-error "Can't exchange block region with non-block region"))
@@ -114,19 +115,37 @@
          (t
           (evil-exchange--do-swap beg-marker end-marker
                                   orig-beg orig-end
-                                  #'delete-and-extract-region #'insert))))))
+                                  #'delete-and-extract-region #'insert
+                                  t))))))
   ;; place cursor on beginning of line
   (when (and (evil-called-interactively-p) (eq type 'line))
     (evil-first-non-blank)))
 
-(defun evil-exchange--do-swap (curr-beg curr-end orig-beg orig-end extract-fn insert-fn)
-  (let ((orig-text (funcall extract-fn orig-beg orig-end))
+(defun evil-exchange--do-swap (curr-beg curr-end orig-beg orig-end extract-fn insert-fn not-block)
+  ;; This function does the real exchange work. Here's the detailed steps:
+  ;; 1. call extract-fn with orig-beg and orig-end to extract orig-text.
+  ;; 2. call extract-fn with curr-beg and curr-end to extract curr-text.
+  ;; 3. go to orig-beg and then call insert-fn with curr-text.
+  ;; 4. go to curr-beg and then call insert-fn with orig-text.
+  ;; After step 2, curr-beg and curr-end (the same as orig-beg and orig-end)
+  ;; will point to the same position. So if orig-beg is at the same position of
+  ;; curr-end initially, orig-beg and curr-beg will point to the same position
+  ;; before step 3. Because curr-beg is a marker moved after insertion, the
+  ;; insertion in step 3 will push it to the end of the newly inserted text,
+  ;; thus resulting incorrect behaviour.
+  ;; To fix this edge case, we swap two extracted texts before step 3 to
+  ;; effectively reverse the (problematic) order of two `evil-exchange' calls.
+  (let ((adjacent (and not-block (equal (marker-position orig-beg) (marker-position curr-end))))
+        (orig-text (funcall extract-fn orig-beg orig-end))
         (curr-text (funcall extract-fn curr-beg curr-end)))
-    (save-excursion
-      (goto-char orig-beg)
-      (funcall insert-fn curr-text)
-      (goto-char curr-beg)
-      (funcall insert-fn orig-text)))
+    ;; swaps two texts if adjacent is set
+    (let ((orig-text (if adjacent curr-text orig-text))
+          (curr-text (if adjacent orig-text curr-text)))
+      (save-excursion
+        (goto-char orig-beg)
+        (funcall insert-fn curr-text)
+        (goto-char curr-beg)
+        (funcall insert-fn orig-text))))
   (setq evil-exchange--position nil)
   (evil-exchange--remove-overlays))
 
