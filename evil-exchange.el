@@ -4,7 +4,7 @@
 
 ;; Author: Dewdrops <v_v_4474@126.com>
 ;; URL: http://github.com/Dewdrops/evil-exchange
-;; Version: 0.21
+;; Version: 0.22
 ;; Keywords: evil, plugin
 ;; Package-Requires: ((evil "1.0.7") (cl-lib "0.3"))
 
@@ -109,7 +109,7 @@
                                   #'delete-extract-rectangle #'insert-rectangle))
          ;; signal error if regions incompatible
          ((or (eq orig-type 'block) (eq type 'block))
-          (error "Can't exchange block region with non-block region."))
+          (user-error "Can't exchange block region with non-block region"))
          ;; exchange normal region
          (t
           (evil-exchange--do-swap beg-marker end-marker
@@ -134,9 +134,11 @@
 (defun evil-exchange-cancel ()
   "Cancel current pending exchange."
   (interactive)
-  (setq evil-exchange--position nil)
-  (evil-exchange--remove-overlays)
-  (message "Exchange cancelled"))
+  (if (null evil-exchange--position)
+      (message "No pending exchange")
+    (setq evil-exchange--position nil)
+    (evil-exchange--remove-overlays)
+    (message "Exchange cancelled")))
 
 ;;;###autoload
 (defun evil-exchange-install ()
@@ -145,6 +147,7 @@
   (define-key evil-visual-state-map evil-exchange-key 'evil-exchange)
   (define-key evil-normal-state-map evil-exchange-cancel-key 'evil-exchange-cancel)
   (define-key evil-visual-state-map evil-exchange-cancel-key 'evil-exchange-cancel))
+
 
 (provide 'evil-exchange)
 ;;; evil-exchange.el ends here
