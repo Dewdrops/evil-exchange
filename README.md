@@ -40,3 +40,17 @@ Customization
 
 You can change the default bindings by customizing `evil-exchange-key` and/or `evil-exchange-cancel-key` BEFORE  `evil-exchange-install` is called.
 
+[Experienmental] Vim-compatible key bindings
+-------
+
+Due to the way how evil (and emacs) implements key bindings, `evil-exchange` can't be bound to `cx` (which is the default bindings of the original
+vim plugin) by customizing `evil-exchange-key` option. If you prefer the key bindings suggested by vim-exchange, you can try the settings below:
+
+```lisp
+(require 'evil-exchange)
+(evil-exchange-cx-install)
+```
+
+The `evil-exchange-cx-install` function tries to mimic the original vim plugin's behaviour, i.e. `cx` in normal state bound to `evil-exchange`,
+`cxc` in normal state bound to `evil-exchange-cancel`, and `X` in visual state bound to `evil-exchange`.
+

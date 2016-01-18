@@ -127,10 +127,10 @@
   ;; 2. call extract-fn with curr-beg and curr-end to extract curr-text.
   ;; 3. go to orig-beg and then call insert-fn with curr-text.
   ;; 4. go to curr-beg and then call insert-fn with orig-text.
-  ;; After step 2, curr-beg and curr-end (the same as orig-beg and orig-end)
-  ;; will point to the same position. So if orig-beg is at the same position of
-  ;; curr-end initially, orig-beg and curr-beg will point to the same position
-  ;; before step 3. Because curr-beg is a marker moved after insertion, the
+  ;; After step 2, the two markers of the same beg/end pair (curr or orig)
+  ;; will point to the same position. So if orig-beg points to the same position
+  ;; of curr-end initially, orig-beg and curr-beg will point to the same position
+  ;; before step 3. Because curr-beg is a marker which moves after insertion, the
   ;; insertion in step 3 will push it to the end of the newly inserted text,
   ;; thus resulting incorrect behaviour.
   ;; To fix this edge case, we swap two extracted texts before step 3 to
