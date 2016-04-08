@@ -6,7 +6,7 @@ evil-exchange
 Easy text exchange operator for Evil. This is the port of [vim-exchange](https://github.com/tommcdo/vim-exchange) by Tom McDonald.
 
 Default bindings
---------
+----------------
 
 `gx` (evil-exchange)
 
@@ -25,6 +25,11 @@ Clear any {motion} pending for exchange.
   `gxiw`), you can use `.` (evil-repeat) the second time.
 * `gxx` works as you expect.
 
+Highlights
+----------
+* Unlike the original vim plugin's buffer local behaviour, this extension allows you to exchange texts across buffers.
+* Works correctly even when text insertion/deletion occurs between two `evil-exchange` invokes.
+
 Installation
 ------------
 
@@ -34,6 +39,8 @@ Installation
 ;; (setq evil-exchange-key (kbd "zx"))
 (evil-exchange-install)
 ```
+
+evil-exchange is also available in [melpa](https://melpa.org/) and is shipped with [spacemacs](https://github.com/syl20bnr/spacemacs).
 
 Customization
 -------
