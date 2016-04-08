@@ -76,7 +76,8 @@
     (overlay-put o 'face evil-exchange-highlight-face)
     (add-to-list 'evil-exchange--overlays o)))
 
-(defun evil-exchange--remove-overlays ()
+(defun evil-exchange--clean ()
+  (setq evil-exchange--position nil)
   (mapc 'delete-overlay evil-exchange--overlays)
   (setq evil-exchange--overlays nil))
 
@@ -93,18 +94,19 @@
     (if (null evil-exchange--position)
         ;; call without evil-exchange--position set: store region
         (progn
-          (setq evil-exchange--position (list beg-marker end-marker type))
+          (setq evil-exchange--position (list (current-buffer) beg-marker end-marker type))
           ;; highlight area marked to exchange
           (if (eq type 'block)
               (evil-apply-on-block #'evil-exchange--highlight beg end nil)
             (evil-exchange--highlight beg end)))
       ;; secondary call: do exchange
       (cl-destructuring-bind
-          (orig-beg orig-end orig-type) evil-exchange--position
+          (orig-buffer orig-beg orig-end orig-type) evil-exchange--position
         (cond
          ;; exchange block region
          ((and (eq orig-type 'block) (eq type 'block))
-          (evil-exchange--do-swap beg-marker end-marker
+          (evil-exchange--do-swap (current-buffer) orig-buffer
+                                  beg-marker end-marker
                                   orig-beg orig-end
                                   #'delete-extract-rectangle #'insert-rectangle
                                   nil))
@@ -113,7 +115,8 @@
           (user-error "Can't exchange block region with non-block region"))
          ;; exchange normal region
          (t
-          (evil-exchange--do-swap beg-marker end-marker
+          (evil-exchange--do-swap (current-buffer) orig-buffer
+                                  beg-marker end-marker
                                   orig-beg orig-end
                                   #'delete-and-extract-region #'insert
                                   t))))))
@@ -121,7 +124,8 @@
   (when (and (evil-called-interactively-p) (eq type 'line))
     (evil-first-non-blank)))
 
-(defun evil-exchange--do-swap (curr-beg curr-end orig-beg orig-end extract-fn insert-fn not-block)
+(defun evil-exchange--do-swap (curr-buffer orig-buffer curr-beg curr-end orig-beg
+                                           orig-end extract-fn insert-fn not-block)
   ;; This function does the real exchange work. Here's the detailed steps:
   ;; 1. call extract-fn with orig-beg and orig-end to extract orig-text.
   ;; 2. call extract-fn with curr-beg and curr-end to extract curr-text.
@@ -135,19 +139,30 @@
   ;; thus resulting incorrect behaviour.
   ;; To fix this edge case, we swap two extracted texts before step 3 to
   ;; effectively reverse the (problematic) order of two `evil-exchange' calls.
-  (let ((adjacent (and not-block (equal (marker-position orig-beg) (marker-position curr-end))))
-        (orig-text (funcall extract-fn orig-beg orig-end))
-        (curr-text (funcall extract-fn curr-beg curr-end)))
-    ;; swaps two texts if adjacent is set
-    (let ((orig-text (if adjacent curr-text orig-text))
-          (curr-text (if adjacent orig-text curr-text)))
+  (if (eq curr-buffer orig-buffer)
+      ;; in buffer exchange
+      (let ((adjacent (and not-block (equal (marker-position orig-beg) (marker-position curr-end))))
+            (orig-text (funcall extract-fn orig-beg orig-end))
+            (curr-text (funcall extract-fn curr-beg curr-end)))
+        ;; swaps two texts if adjacent is set
+        (let ((orig-text (if adjacent curr-text orig-text))
+              (curr-text (if adjacent orig-text curr-text)))
+          (save-excursion
+            (goto-char orig-beg)
+            (funcall insert-fn curr-text)
+            (goto-char curr-beg)
+            (funcall insert-fn orig-text))))
+    ;; exchange across buffers
+    (let ((orig-text (with-current-buffer orig-buffer
+                       (funcall extract-fn orig-beg orig-end)))
+          (curr-text (funcall extract-fn curr-beg curr-end)))
       (save-excursion
-        (goto-char orig-beg)
-        (funcall insert-fn curr-text)
+        (with-current-buffer orig-buffer
+          (goto-char orig-beg)
+          (funcall insert-fn curr-text))
         (goto-char curr-beg)
         (funcall insert-fn orig-text))))
-  (setq evil-exchange--position nil)
-  (evil-exchange--remove-overlays))
+  (evil-exchange--clean))
 
 ;;;###autoload
 (defun evil-exchange-cancel ()
@@ -155,8 +170,7 @@
   (interactive)
   (if (null evil-exchange--position)
       (message "No pending exchange")
-    (setq evil-exchange--position nil)
-    (evil-exchange--remove-overlays)
+    (evil-exchange--clean)
     (message "Exchange cancelled")))
 
 ;;;###autoload
