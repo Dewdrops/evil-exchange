@@ -154,7 +154,7 @@
             (funcall insert-fn orig-text))))
     ;; exchange across buffers
     (let ((orig-text (with-current-buffer orig-buffer
-                       (funcall extract-fn orig-beg orig-beg)))
+                       (funcall extract-fn orig-beg orig-end)))
           (curr-text (funcall extract-fn curr-beg curr-end)))
       (save-excursion
         (with-current-buffer orig-buffer
