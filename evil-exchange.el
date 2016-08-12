@@ -184,7 +184,7 @@
 
 (defun evil-exchange/cx ()
   (interactive)
-  (when (memq evil-this-operator '(evil-change evil-cp-change))
+  (when (memq evil-this-operator '(evil-change evil-cp-change lispyville-change))
     (setq evil-inhibit-operator t)
     (define-key evil-operator-shortcut-map "c" 'evil-exchange-cancel)
     (call-interactively #'evil-exchange)
