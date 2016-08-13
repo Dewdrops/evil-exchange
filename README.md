@@ -61,3 +61,7 @@ vim plugin) by customizing `evil-exchange-key` option. If you prefer the key bin
 The `evil-exchange-cx-install` function tries to mimic the original vim plugin's behaviour, i.e. `cx` in normal state bound to `evil-exchange`,
 `cxc` in normal state bound to `evil-exchange-cancel`, and `X` in visual state bound to `evil-exchange`.
 
+Known Issues
+-------
+
+* Some packages may redefine `c` (`evil-change`) in normal state or/and `x` in operator state, which will conflict with the vim style bindings (`cx` and `cxc`). In this case, you may have to unbind them to make `evil-exchange-cx-install` work. Any PRs are welcome for compatibility.
