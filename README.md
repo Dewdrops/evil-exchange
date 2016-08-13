@@ -47,7 +47,7 @@ Customization
 
 You can change the default bindings by customizing `evil-exchange-key` and/or `evil-exchange-cancel-key` BEFORE  `evil-exchange-install` is called.
 
-[Experienmental] Vim-compatible key bindings
+Vim-compatible key bindings
 -------
 
 Due to the way how evil (and emacs) implements key bindings, `evil-exchange` can't be bound to `cx` (which is the default bindings of the original
