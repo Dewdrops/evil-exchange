@@ -1,5 +1,7 @@
 English is not my first language, so feel free to correct me of any mistake.
 
+[![MELPA](https://melpa.org/packages/evil-exchange-badge.svg)](https://melpa.org/#/evil-exchange)
+
 evil-exchange
 ============
 
