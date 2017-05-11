@@ -121,7 +121,7 @@
                                   #'delete-and-extract-region #'insert
                                   t))))))
   ;; place cursor on beginning of line
-  (when (and (evil-called-interactively-p) (eq type 'line))
+  (when (and (called-interactively-p 'any) (eq type 'line))
     (evil-first-non-blank)))
 
 (defun evil-exchange--do-swap (curr-buffer orig-buffer curr-beg curr-end orig-beg
