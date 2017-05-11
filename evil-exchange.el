@@ -1,10 +1,10 @@
 ;;; evil-exchange.el --- Exchange text more easily within Evil
 
-;; Copyright (C) 2013-2016 by Dewdrops
+;; Copyright (C) 2013-2017 by Dewdrops
 
 ;; Author: Dewdrops <v_v_4474@126.com>
 ;; URL: http://github.com/Dewdrops/evil-exchange
-;; Version: 0.40
+;; Version: 0.41
 ;; Keywords: evil, plugin
 ;; Package-Requires: ((evil "1.2.8") (cl-lib "0.3"))
 
