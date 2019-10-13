@@ -91,7 +91,8 @@
   (interactive "<R>")
   (let ((beg-marker (copy-marker beg t))
         (end-marker (copy-marker end nil)))
-    (if (null evil-exchange--position)
+    (if (or (null evil-exchange--position)
+            (not (buffer-live-p (car evil-exchange--position))))
         ;; call without evil-exchange--position set: store region
         (progn
           (setq evil-exchange--position (list (current-buffer) beg-marker end-marker type))
