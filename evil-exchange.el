@@ -169,6 +169,8 @@
 (defun evil-exchange-cancel ()
   "Cancel current pending exchange."
   (interactive)
+  (when evil-this-operator
+    (setq evil-inhibit-operator t))
   (if (null evil-exchange--position)
       (message "No pending exchange")
     (evil-exchange--clean)
