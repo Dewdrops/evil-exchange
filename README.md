@@ -1,7 +1,7 @@
 [![MELPA](https://melpa.org/packages/evil-exchange-badge.svg)](https://melpa.org/#/evil-exchange)
 [![Build Status](https://travis-ci.org/Dewdrops/evil-exchange.png?branch=master)](https://travis-ci.org/Dewdrops/evil-exchange)
 
-English is not my first language, so feel free to correct me of any mistake.
+English is not my first language, so feel free to correct any of my mistake.
 
 evil-exchange
 ============
