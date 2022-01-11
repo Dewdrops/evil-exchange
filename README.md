@@ -1,3 +1,4 @@
+[![NonGNU ELPA](https://elpa.nongnu.org/nongnu/evil-exchange.svg)](https://elpa.nongnu.org/nongnu/evil-exchange.html)
 [![MELPA](https://melpa.org/packages/evil-exchange-badge.svg)](https://melpa.org/#/evil-exchange)
 [![Build Status](https://travis-ci.org/Dewdrops/evil-exchange.png?branch=master)](https://travis-ci.org/Dewdrops/evil-exchange)
 
